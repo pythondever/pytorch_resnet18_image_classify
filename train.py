@@ -55,12 +55,12 @@ def train_model(model, loss_func, optimizer, step_scheduler, num_epochs=config.e
         transforms.Resize((224, 224)),
         transforms.RandomHorizontalFlip(),
         transforms.ToTensor(),
-        transforms.Normalize([0.5, 0.5, 0.5], [0.5, 0.5, 0.5])  # 各通道颜色的均值和方差,用于归一化
+        # transforms.Normalize([0.5, 0.5, 0.5], [0.5, 0.5, 0.5])  # 各通道颜色的均值和方差,用于归一化
     ])
     valid_transform = transforms.Compose([
         transforms.Resize((224, 224)),
         transforms.ToTensor(),
-        transforms.Normalize([0.5, 0.5, 0.5], [0.5, 0.5, 0.5])  # 各通道颜色的均值和方差,用于归一化
+        # transforms.Normalize([0.5, 0.5, 0.5], [0.5, 0.5, 0.5])  # 各通道颜色的均值和方差,用于归一化
     ])
     train_dataset = Dataset(config.train_image_path, train_transform, config.image_format)
     valid_dataset = Dataset(config.valid_image_path, valid_transform, config.image_format)
