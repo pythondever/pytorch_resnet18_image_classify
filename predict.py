@@ -7,6 +7,7 @@ import numpy as np
 from torch import nn
 from PIL import Image
 from torchvision import models
+import torch.nn.functional as F
 import torchvision.transforms as transforms
 
 transform_test = transforms.Compose([
@@ -27,6 +28,10 @@ def predict_images(image_file, label, model):
         outputs = model(image)
         outputs = outputs.to('cpu')
     predict_label = torch.max(outputs, dim=1)[1].data.numpy()[0]
+    confidence = F.softmax(outputs[0], dim=0)
+    probabilities = torch.max(confidence)
+    probabilities = round(probabilities.item(), 3)
+    print("image={},预测label={},概率={}".format(image_file, predict_label, probabilities))
     if predict_label != label:
         print("predict error image = {}".format(image_file))
 
