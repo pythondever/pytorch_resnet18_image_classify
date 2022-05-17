@@ -13,6 +13,7 @@ from torchvision.datasets import ImageFolder
 
 def get_normalize_mean_std(image_path):
     # 根据自己的数据集计算normalize mean 和 std
+    # pytorch 在各个数据集上面计算得来是 transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
     train_datas = ImageFolder(image_path, transform=transforms.ToTensor())
     data_loader = torch.utils.data.DataLoader(train_datas, batch_size=1, shuffle=True)
     mean = torch.zeros(3)
@@ -20,7 +21,7 @@ def get_normalize_mean_std(image_path):
     for i, _ in data_loader:
         for j in range(3):
             mean[j] += i[:, j, :, :].mean()
-            std[j] +=  i[:, j, :, :].std()
+            std[j] += i[:, j, :, :].std()
     mean.div_(len(data_loader))
     std.div_(len(data_loader))
     mean_list = list(mean.numpy())
