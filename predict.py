@@ -7,6 +7,7 @@ import numpy as np
 from torch import nn
 from PIL import Image
 from torchvision import models
+import torch.nn.functional as F
 import torchvision.transforms as transforms
 
 transform_test = transforms.Compose([
@@ -25,8 +26,12 @@ def predict_images(image_file, label, model):
     image = image.unsqueeze_(0).to(config.device)
     with torch.no_grad():
         outputs = model(image)
-        outputs = outputs.to('cpu')
-    predict_label = torch.max(outputs, dim=1)[1].data.numpy()[0]
+        outputs = outputs.to(config.device)
+    predict_label = torch.max(outputs, dim=1)[1].data.cpu().numpy()[0]
+    confidence = F.softmax(outputs[0], dim=0)
+    probabilities = torch.max(confidence)
+    probabilities = round(probabilities.item(), 3)
+    print("image={},预测label={},概率={}".format(image_file, predict_label, probabilities))
     if predict_label != label:
         print("predict error image = {}".format(image_file))
 
@@ -40,8 +45,8 @@ def get_image_label_to_predict():
     num_fits = model.fc.in_features
     model.fc = nn.Linear(num_fits, config.num_classes)
     model.load_state_dict(torch.load(config.predict_model)['net'])
-    model.eval()
     model.to(config.device)
+    model.eval()
     classes_dir = os.listdir(config.predict_image_path)
     for label in classes_dir:
         label_path = os.path.join(config.predict_image_path, label)

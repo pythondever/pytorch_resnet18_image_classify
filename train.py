@@ -43,7 +43,7 @@ def train(model, loss_func, dataset, optimizer, epoch, writer):
         loss = loss_func(output, label)
         loss.backward()
         optimizer.step()
-        writer.add_images("train_images", image, epoch)
+        # writer.add_images("train_images", image, epoch)
         writer.add_scalar("train_loss", loss, epoch)
         print("Train Epoch = {} Loss = {}".format(epoch, loss.data.item()))
         batch_loss += loss.data.item()
